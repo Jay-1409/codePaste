@@ -17,7 +17,7 @@ public class PasteController {
     public ResponseEntity<?> systemCheck() {
         return new ResponseEntity<>("system is healthy", HttpStatus.OK);
     }
-    @GetMapping("/add")
+    @GetMapping("/addPaste")
     public ResponseEntity<?> addPaste(@RequestBody PasteBody newPaste) {
         try {
            return new ResponseEntity<>(pasteService.addPaste(newPaste), HttpStatus.OK);
@@ -25,11 +25,19 @@ public class PasteController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    @GetMapping("/uniqueID/{pasteId}")
+    @GetMapping("/getPaste/{pasteId}")
     public ResponseEntity<?> checkIdUniqueness(@RequestParam String pasteId) {
         try {
             return new ResponseEntity<>(pasteService.checkIfIdExists(pasteId), HttpStatus.OK);
         } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @DeleteMapping("/deletePaste/{pasteId}")
+    public ResponseEntity<?> deletePaste(@RequestParam String pasteId) {
+        try {
+            return new ResponseEntity<>(pasteService.deletePaste(pasteId), HttpStatus.OK);
+        } catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

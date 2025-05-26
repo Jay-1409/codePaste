@@ -5,7 +5,6 @@ import reactor.util.annotation.NonNull;
 import java.time.Instant;
 
 public class PasteBody {
-    @NonNull
     private String pasteId = "";
     @NonNull
     private String paste = "";
@@ -23,12 +22,11 @@ public class PasteBody {
         this.pastePass = pastePass;
     }
 
-    @NonNull
     public String getPasteId() {
         return pasteId;
     }
 
-    public void setPasteId(@NonNull String pasteId) {
+    public void setPasteId(String pasteId) {
         this.pasteId = pasteId;
     }
 

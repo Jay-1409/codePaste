@@ -4,6 +4,9 @@ import com.example.codePost.entity.Paste;
 import com.example.codePost.entity.PasteBody;
 import com.example.codePost.repository.PasteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,7 +24,10 @@ public class PasteService {
     @Autowired
     PasteRepository pasteRepository;
     PasswordEncoder encoder = new BCryptPasswordEncoder();
+
+
     @Transactional
+    @CachePut(value = "pastes", key = "#result.pasteId")
     public Paste addPaste(@NonNull PasteBody paste) {
         Paste newPaste = new Paste();
         String dumId = NanoIdUtils.randomNanoId();
@@ -37,13 +43,30 @@ public class PasteService {
         pasteRepository.save(newPaste);
         return newPaste;
     }
-//    HashTable<String, Paste> pasteTable;
-
+    @Cacheable(value = "pastes", key = "#pasteId")
     public boolean checkIfIdExists(String pasteId) {
         Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
         if(reqPaste.isPresent()){
             return true;
         }
         return false;
+    }
+    @Cacheable(value = "pastes", key = "#pasteId")
+    public Paste getPaste(String pasteId){
+        Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
+        if(reqPaste.isPresent()) {
+            Paste activePase = reqPaste.get();
+            return activePase;
+        }
+        return null;
+    }
+    @CacheEvict(value = "pastes", key = "#pasteid")
+    public Boolean deletePaste(String pasteid){
+        try {
+            pasteRepository.deleteById(pasteid);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
