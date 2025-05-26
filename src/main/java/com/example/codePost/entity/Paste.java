@@ -1,5 +1,6 @@
 package com.example.codePost.entity;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import reactor.util.annotation.NonNull;
 
@@ -9,6 +10,7 @@ import java.time.Instant;
 @Document(collection = "paste")
 public class Paste {
     @NonNull
+    @Id
     private String pasteId = "";
 
     @NonNull
@@ -17,10 +19,13 @@ public class Paste {
     private String pastePass;
 
     @NonNull
-    private Boolean access = Boolean.TRUE;
+    private Boolean access = true;
 
     @NonNull
-    private Instant expireAfter = Instant.now().plus(Duration.ofDays(1));
+    private Instant expireAfter = Instant.now().plus(Duration.ofDays(30));
+
+    Boolean isPassProtected = false;
+
     @NonNull
     public String getPasteId() {
         return pasteId;
@@ -63,6 +68,14 @@ public class Paste {
 
     public void setExpireAfter(@NonNull Instant expireAfter) {
         this.expireAfter = expireAfter;
+    }
+
+    public Boolean getPassProtected() {
+        return isPassProtected;
+    }
+
+    public void setPassProtected(Boolean passProtected) {
+        isPassProtected = passProtected;
     }
 }
 
