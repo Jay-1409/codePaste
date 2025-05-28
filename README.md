@@ -53,7 +53,10 @@ This project is primarily a demonstration of system design capabilities includin
 * **Selective authentication** configuration allowing public and protected endpoints.
 
 ---
+### Project Structure
+![design1](https://github.com/user-attachments/assets/ebd4599c-193a-4a65-879d-d7ca331749ce)
 
+---
 ## Getting Started
 
 ### Prerequisites
@@ -91,7 +94,7 @@ The app uses **Basic Authentication**. Default user credentials are:
 * **Password:** `password`
 
 You can customize this in the `SecurityConfig` class.
-
+By default all apis are set to be allowed without authentication.
 ### API Endpoints
 
 * `POST /paste/addPaste` — Create a new paste.
