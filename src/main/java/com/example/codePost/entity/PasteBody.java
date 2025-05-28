@@ -1,18 +1,20 @@
 package com.example.codePost.entity;
 
-import reactor.util.annotation.NonNull;
-
-import java.time.Instant;
+import org.jetbrains.annotations.NotNull;
 
 public class PasteBody {
     private String pasteId = "";
-    @NonNull
-    private String paste = "";
-    private Long expireAfter = null;
-    private Boolean access = true;
-    private Boolean isPassProtected = false;
-    private String pastePass = null;
 
+    @NotNull
+    private String paste = "";
+
+    private Long expireAfter = null;
+
+    private Boolean access = true;
+
+    private Boolean isPassProtected = false;
+
+    private String pastePass = null;
 
     public String getPastePass() {
         return pastePass;
@@ -30,12 +32,11 @@ public class PasteBody {
         this.pasteId = pasteId;
     }
 
-    @NonNull
     public String getPaste() {
         return paste;
     }
 
-    public void setPaste(@NonNull String paste) {
+    public void setPaste(String paste) {
         this.paste = paste;
     }
 
@@ -63,3 +64,4 @@ public class PasteBody {
         isPassProtected = passProtected;
     }
 }
+

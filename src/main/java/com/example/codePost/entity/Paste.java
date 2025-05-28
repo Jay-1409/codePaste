@@ -2,45 +2,46 @@ package com.example.codePost.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import reactor.util.annotation.NonNull;
+import org.jetbrains.annotations.NotNull;
+import java.io.Serializable;
 
 import java.time.Duration;
 import java.time.Instant;
 
 @Document(collection = "paste")
-public class Paste {
-    @NonNull
+public class Paste implements Serializable {
+    @NotNull
     @Id
     private String pasteId = "";
 
-    @NonNull
+    @NotNull
     private String paste = "";
 
     private String pastePass;
 
-    @NonNull
+    @NotNull
     private Boolean access = true;
 
-    @NonNull
+    @NotNull
     private Instant expireAfter = Instant.now().plus(Duration.ofDays(30));
 
     Boolean isPassProtected = false;
 
-    @NonNull
+    @NotNull
     public String getPasteId() {
         return pasteId;
     }
 
-    public void setPasteId(@NonNull String pasteId) {
+    public void setPasteId(@NotNull String pasteId) {
         this.pasteId = pasteId;
     }
 
-    @NonNull
+    @NotNull
     public String getPaste() {
         return paste;
     }
 
-    public void setPaste(@NonNull String paste) {
+    public void setPaste(@NotNull String paste) {
         this.paste = paste;
     }
 
@@ -52,21 +53,21 @@ public class Paste {
         this.pastePass = pastePass;
     }
 
-    @NonNull
+    @NotNull
     public Boolean getAccess() {
         return access;
     }
 
-    public void setAccess(@NonNull Boolean access) {
+    public void setAccess(@NotNull Boolean access) {
         this.access = access;
     }
 
-    @NonNull
+    @NotNull
     public Instant getExpireAfter() {
         return expireAfter;
     }
 
-    public void setExpireAfter(@NonNull Instant expireAfter) {
+    public void setExpireAfter(@NotNull Instant expireAfter) {
         this.expireAfter = expireAfter;
     }
 
