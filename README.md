@@ -123,4 +123,4 @@ This project is open-source and free to use.
 
 ---
 
-Built with ❤️ by Jay-1409 to showcase system design and Spring Boot skills.
+Built with ❤️ by Jay-1409
