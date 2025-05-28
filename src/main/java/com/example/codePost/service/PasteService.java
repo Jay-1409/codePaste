@@ -43,7 +43,6 @@ public class PasteService {
         newPaste.setPaste(paste.getPaste());
         if (paste.getAccess().equals(Boolean.FALSE) && paste.getPastePass() != null) {
             newPaste.setPastePass(encoder.encode(paste.getPastePass()));
-            newPaste.setPassProtected(true);
         }
         Instant expiration = paste.getExpireAfter() == null ? Instant.now().plus(Duration.ofDays(30)) : Instant.now().plus(Duration.ofDays(paste.getExpireAfter()));
         newPaste.setExpireAfter(expiration);
@@ -84,9 +83,10 @@ public class PasteService {
             @CacheEvict(value = "pastes", key = "#pasteId"),
             @CacheEvict(value = "pasteExistsCache", key = "#pasteId")
     })
-    public Boolean deletePaste(String pasteid){
+    @Transactional
+    public Boolean deletePaste(String pasteId){
         try {
-            pasteRepository.deleteById(pasteid);
+            pasteRepository.deleteById(pasteId);
             return true;
         } catch (Exception e) {
             return false;

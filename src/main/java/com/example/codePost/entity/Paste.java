@@ -25,7 +25,7 @@ public class Paste implements Serializable {
     @NotNull
     private Instant expireAfter = Instant.now().plus(Duration.ofDays(30));
 
-    Boolean isPassProtected = false;
+//    Boolean isPassProtected = false;
 
     @NotNull
     public String getPasteId() {
@@ -71,13 +71,13 @@ public class Paste implements Serializable {
         this.expireAfter = expireAfter;
     }
 
-    public Boolean getPassProtected() {
-        return isPassProtected;
-    }
-
-    public void setPassProtected(Boolean passProtected) {
-        isPassProtected = passProtected;
-    }
+//    public Boolean getPassProtected() {
+//        return isPassProtected;
+//    }
+//
+//    public void setPassProtected(Boolean passProtected) {
+//        isPassProtected = passProtected;
+//    }
 }
 
 // basic architecture:

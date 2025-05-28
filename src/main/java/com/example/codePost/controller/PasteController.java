@@ -59,7 +59,10 @@ public class PasteController {
     @DeleteMapping("/deletePaste")
     public ResponseEntity<?> deletePaste(@RequestParam String pasteId) {
         try {
-            return new ResponseEntity<>(pasteService.deletePaste(pasteId), HttpStatus.OK);
+            if(pasteService.checkIfIdExists(pasteId))
+                return new ResponseEntity<>(pasteService.deletePaste(pasteId), HttpStatus.OK);
+            else
+                return new ResponseEntity<>("This paste id does not exits", HttpStatus.NOT_FOUND);
         } catch (Exception e){
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }

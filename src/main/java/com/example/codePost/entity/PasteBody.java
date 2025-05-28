@@ -12,7 +12,7 @@ public class PasteBody {
 
     private Boolean access = true;
 
-    private Boolean isPassProtected = false;
+//    private Boolean isPassProtected = false;
 
     private String pastePass = null;
 
@@ -56,12 +56,12 @@ public class PasteBody {
         this.access = access;
     }
 
-    public Boolean getPassProtected() {
-        return isPassProtected;
-    }
-
-    public void setPassProtected(Boolean passProtected) {
-        isPassProtected = passProtected;
-    }
+//    public Boolean getPassProtected() {
+//        return isPassProtected;
+//    }
+//
+//    public void setPassProtected(Boolean passProtected) {
+//        isPassProtected = passProtected;
+//    }
 }
 
