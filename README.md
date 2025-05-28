@@ -54,6 +54,7 @@ This project is primarily a demonstration of system design capabilities includin
 
 ---
 ### Project Structure
+![image](https://github.com/user-attachments/assets/9e6d1404-ba50-4b65-8222-9e6369c33d69)
 ![design1](https://github.com/user-attachments/assets/ebd4599c-193a-4a65-879d-d7ca331749ce)
 
 ---
