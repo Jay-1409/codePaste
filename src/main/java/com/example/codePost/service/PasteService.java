@@ -7,13 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.util.annotation.NonNull;
-import scala.collection.mutable.HashTable;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -27,15 +28,21 @@ public class PasteService {
 
 
     @Transactional
-    @CachePut(value = "pastes", key = "#result.pasteId")
-    public Paste addPaste(@NonNull PasteBody paste) {
+    @Caching(evict = {
+            @CacheEvict(value = "pasteExistsCache", key = "#result.pasteId" )
+    },
+        put = {
+            @CachePut(value = "pastes", key  = "#result.pasteId")
+        }
+    )
+    public Paste addPaste(@NotNull PasteBody paste) {
         Paste newPaste = new Paste();
         String dumId = NanoIdUtils.randomNanoId();
-        newPaste.setPasteId( paste.getPasteId() == null ? dumId : paste.getPasteId());
+        String finalId = (paste.getPasteId() == null || paste.getPasteId().isBlank()) ? dumId : paste.getPasteId();
+        newPaste.setPasteId(finalId);
         newPaste.setPaste(paste.getPaste());
-        if(paste.getPassProtected()) {
+        if (paste.getAccess().equals(Boolean.FALSE) && paste.getPastePass() != null) {
             newPaste.setPastePass(encoder.encode(paste.getPastePass()));
-            newPaste.setPassProtected(true);
         }
         Instant expiration = paste.getExpireAfter() == null ? Instant.now().plus(Duration.ofDays(30)) : Instant.now().plus(Duration.ofDays(paste.getExpireAfter()));
         newPaste.setExpireAfter(expiration);
@@ -43,27 +50,43 @@ public class PasteService {
         pasteRepository.save(newPaste);
         return newPaste;
     }
-    @Cacheable(value = "pastes", key = "#pasteId")
+    @Cacheable(value = "pasteExistsCache", key = "#pasteId")
     public boolean checkIfIdExists(String pasteId) {
         Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
-        if(reqPaste.isPresent()){
-            return true;
+        return reqPaste.isPresent();
+    }
+    @Cacheable(value = "isPassProtected", key = "#pasteId")
+    public boolean checkIfPassProtected(String pasteId){
+        Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
+        if(reqPaste.isPresent()) {
+            Paste activePaste = reqPaste.get();
+            if(activePaste.getAccess().equals(false)) {
+                return true;
+            }
         }
         return false;
     }
     @Cacheable(value = "pastes", key = "#pasteId")
-    public Paste getPaste(String pasteId){
+    public Paste getPaste(String pasteId, String password){
         Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
         if(reqPaste.isPresent()) {
-            Paste activePase = reqPaste.get();
-            return activePase;
+            Paste activePaste = reqPaste.get();
+            if(activePaste.getAccess().equals(false)) {
+                if(password.equals(activePaste.getPastePass())){
+                    return activePaste;
+                }
+            }
         }
         return null;
     }
-    @CacheEvict(value = "pastes", key = "#pasteid")
-    public Boolean deletePaste(String pasteid){
+    @Caching(evict = {
+            @CacheEvict(value = "pastes", key = "#pasteId"),
+            @CacheEvict(value = "pasteExistsCache", key = "#pasteId")
+    })
+    @Transactional
+    public Boolean deletePaste(String pasteId){
         try {
-            pasteRepository.deleteById(pasteid);
+            pasteRepository.deleteById(pasteId);
             return true;
         } catch (Exception e) {
             return false;
