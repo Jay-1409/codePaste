@@ -1,0 +1,36 @@
+package com.example.codePost.service;
+
+import com.example.codePost.entity.Paste;
+import com.example.codePost.exception.PasteAccessDeniedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PasteAccessService implements PasteAccessPolicy {
+    private final PasswordEncoder passwordEncoder;
+
+    public PasteAccessService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public boolean isProtected(Paste paste) {
+        return Boolean.FALSE.equals(paste.getAccess());
+    }
+
+    @Override
+    public String encodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
+    @Override
+    public void verifyAccess(Paste paste, String password) {
+        if (!isProtected(paste)) {
+            return;
+        }
+        if (password == null || password.isBlank() || paste.getPastePass() == null
+                || !passwordEncoder.matches(password, paste.getPastePass())) {
+            throw new PasteAccessDeniedException();
+        }
+    }
+}

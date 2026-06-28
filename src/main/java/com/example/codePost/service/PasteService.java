@@ -2,97 +2,95 @@ package com.example.codePost.service;
 
 import com.example.codePost.entity.Paste;
 import com.example.codePost.entity.PasteBody;
+import com.example.codePost.exception.PasteNotFoundException;
 import com.example.codePost.repository.PasteRepository;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
-import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
 
 @Service
 public class PasteService {
     private final PasteRepository pasteRepository;
-    private final UidPool uidPool;
-    PasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasteIdGenerator pasteIdGenerator;
+    private final PasteCache pasteCache;
+    private final PasteExpiryPolicy pasteExpiryPolicy;
+    private final PasteAccessPolicy pasteAccessPolicy;
+    private final Clock clock;
 
-    public PasteService(PasteRepository pasteRepository, UidPool uidPool) {
+    public PasteService(
+            PasteRepository pasteRepository,
+            PasteIdGenerator pasteIdGenerator,
+            PasteCache pasteCache,
+            PasteExpiryPolicy pasteExpiryPolicy,
+            PasteAccessPolicy pasteAccessPolicy,
+            Clock clock
+    ) {
         this.pasteRepository = pasteRepository;
-        this.uidPool = uidPool;
+        this.pasteIdGenerator = pasteIdGenerator;
+        this.pasteCache = pasteCache;
+        this.pasteExpiryPolicy = pasteExpiryPolicy;
+        this.pasteAccessPolicy = pasteAccessPolicy;
+        this.clock = clock;
     }
 
-    @Transactional
-    @Caching(
-            evict = {
-            @CacheEvict(value = "pasteExistsCache", key = "#result.pasteId" )
-            },
-            put = {
-                    @CachePut(value = "pastes", key  = "#result.pasteId")
-            }
-    )
-    public Paste addPaste(@NotNull PasteBody paste) throws InterruptedException {
+    public Paste addPaste(@NotNull PasteBody paste) {
         Paste newPaste = new Paste();
-        String finalId = (paste.getPasteId() == null || paste.getPasteId().isBlank())
-                ? uidPool.GetId()
+        String pasteId = paste.getPasteId() == null || paste.getPasteId().isBlank()
+                ? pasteIdGenerator.nextId()
                 : paste.getPasteId();
-        newPaste.setPasteId(finalId);
+
+        newPaste.setPasteId(pasteId);
         newPaste.setPaste(paste.getPaste());
-        if (paste.getAccess().equals(Boolean.FALSE) && paste.getPastePass() != null) {
-            newPaste.setPastePass(encoder.encode(paste.getPastePass()));
-        }
-        Instant expiration = paste.getExpireAfter() == null ? Instant.now().plus(Duration.ofDays(30)) : Instant.now().plus(Duration.ofDays(paste.getExpireAfter()));
-        newPaste.setExpireAfter(expiration);
         newPaste.setAccess(paste.getAccess());
-        pasteRepository.save(newPaste);
-        return newPaste;
+
+        if (Boolean.FALSE.equals(paste.getAccess()) && paste.getPastePass() != null) {
+            newPaste.setPastePass(pasteAccessPolicy.encodePassword(paste.getPastePass()));
+        }
+
+        Instant expiration = paste.getExpireAfter() == null
+                ? clock.instant().plus(Duration.ofDays(30))
+                : clock.instant().plus(Duration.ofDays(paste.getExpireAfter()));
+        newPaste.setExpireAfter(expiration);
+
+        Paste savedPaste = pasteRepository.insert(newPaste);
+        pasteCache.put(savedPaste);
+        return savedPaste;
     }
-    @Cacheable(value = "pasteExistsCache", key = "#pasteId")
+
     public boolean checkIfIdExists(String pasteId) {
-        Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
-        return reqPaste.isPresent();
-    }
-    @Cacheable(value = "isPassProtected", key = "#pasteId")
-    public boolean checkIfPassProtected(String pasteId){
-        Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
-        if(reqPaste.isPresent()) {
-            Paste activePaste = reqPaste.get();
-            if(activePaste.getAccess().equals(false)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    @Cacheable(value = "pastes", key = "#pasteId")
-    public Paste getPaste(String pasteId, String password){
-        Optional<Paste> reqPaste = pasteRepository.findById(pasteId);
-        if(reqPaste.isPresent()) {
-            Paste activePaste = reqPaste.get();
-            if(activePaste.getAccess().equals(false)) {
-                if(password.equals(activePaste.getPastePass())){
-                    return activePaste;
-                }
-            }
-        }
-        return null;
-    }
-    @Caching(evict = {
-            @CacheEvict(value = "pastes", key = "#pasteId"),
-            @CacheEvict(value = "pasteExistsCache", key = "#pasteId")
-    })
-    @Transactional
-    public Boolean deletePaste(String pasteId){
-        try {
-            pasteRepository.deleteById(pasteId);
-            return true;
-        } catch (Exception e) {
+        Paste paste = pasteCache.findById(pasteId);
+        if (paste == null) {
             return false;
         }
+        pasteExpiryPolicy.requireActive(paste);
+        return true;
+    }
+
+    public boolean checkIfPassProtected(String pasteId) {
+        return pasteAccessPolicy.isProtected(getActivePaste(pasteId));
+    }
+
+    public Paste getPaste(String pasteId, String password) {
+        Paste paste = getActivePaste(pasteId);
+        pasteAccessPolicy.verifyAccess(paste, password);
+        return paste;
+    }
+
+    public boolean deletePaste(String pasteId) {
+        Paste paste = getActivePaste(pasteId);
+        pasteRepository.deleteById(paste.getPasteId());
+        pasteCache.evict(paste.getPasteId());
+        return true;
+    }
+
+    private Paste getActivePaste(String pasteId) {
+        Paste paste = pasteCache.findById(pasteId);
+        if (paste == null) {
+            throw new PasteNotFoundException(pasteId);
+        }
+        return pasteExpiryPolicy.requireActive(paste);
     }
 }

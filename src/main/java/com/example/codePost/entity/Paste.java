@@ -1,6 +1,7 @@
 package com.example.codePost.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
@@ -26,6 +27,7 @@ public class Paste implements Serializable {
     private Boolean access = true;
 
     @NotNull
+    @Indexed(expireAfter = "0s")
     private Instant expireAfter = Instant.now().plus(Duration.ofDays(30));
 
 //    Boolean isPassProtected = false;
