@@ -3,14 +3,11 @@ package com.example.codePost.service;
 import com.example.codePost.entity.Paste;
 import com.example.codePost.entity.PasteBody;
 import com.example.codePost.repository.PasteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,23 +19,29 @@ import java.util.Optional;
 
 @Service
 public class PasteService {
-    @Autowired
-    PasteRepository pasteRepository;
+    private final PasteRepository pasteRepository;
+    private final UidPool uidPool;
     PasswordEncoder encoder = new BCryptPasswordEncoder();
 
+    public PasteService(PasteRepository pasteRepository, UidPool uidPool) {
+        this.pasteRepository = pasteRepository;
+        this.uidPool = uidPool;
+    }
 
     @Transactional
-    @Caching(evict = {
+    @Caching(
+            evict = {
             @CacheEvict(value = "pasteExistsCache", key = "#result.pasteId" )
-    },
-        put = {
-            @CachePut(value = "pastes", key  = "#result.pasteId")
-        }
+            },
+            put = {
+                    @CachePut(value = "pastes", key  = "#result.pasteId")
+            }
     )
-    public Paste addPaste(@NotNull PasteBody paste) {
+    public Paste addPaste(@NotNull PasteBody paste) throws InterruptedException {
         Paste newPaste = new Paste();
-        String dumId = NanoIdUtils.randomNanoId();
-        String finalId = (paste.getPasteId() == null || paste.getPasteId().isBlank()) ? dumId : paste.getPasteId();
+        String finalId = (paste.getPasteId() == null || paste.getPasteId().isBlank())
+                ? uidPool.GetId()
+                : paste.getPasteId();
         newPaste.setPasteId(finalId);
         newPaste.setPaste(paste.getPaste());
         if (paste.getAccess().equals(Boolean.FALSE) && paste.getPastePass() != null) {
