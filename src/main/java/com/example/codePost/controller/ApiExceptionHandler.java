@@ -1,0 +1,40 @@
+package com.example.codePost.controller;
+
+import com.example.codePost.exception.PasteAccessDeniedException;
+import com.example.codePost.exception.PasteExpiredException;
+import com.example.codePost.exception.PasteIdConflictException;
+import com.example.codePost.exception.PasteNotFoundException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class ApiExceptionHandler {
+
+    @ExceptionHandler(PasteExpiredException.class)
+    public ResponseEntity<String> handleExpiredPaste(PasteExpiredException exception) {
+        return ResponseEntity.status(HttpStatus.GONE).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(PasteNotFoundException.class)
+    public ResponseEntity<String> handleMissingPaste(PasteNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(PasteAccessDeniedException.class)
+    public ResponseEntity<String> handleDeniedAccess(PasteAccessDeniedException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
+    }
+
+    @ExceptionHandler({PasteIdConflictException.class, DuplicateKeyException.class})
+    public ResponseEntity<String> handleDuplicateId(Exception exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleBadRequest(IllegalArgumentException exception) {
+        return ResponseEntity.badRequest().body(exception.getMessage());
+    }
+}

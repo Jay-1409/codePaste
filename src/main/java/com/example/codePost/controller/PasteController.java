@@ -1,78 +1,61 @@
 package com.example.codePost.controller;
 
+import com.example.codePost.entity.Paste;
 import com.example.codePost.entity.PasteBody;
+import com.example.codePost.exception.PasteIdConflictException;
 import com.example.codePost.service.PasteService;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.ReactiveFindOperation;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/paste")
 public class PasteController {
-    @Autowired
-    PasteService pasteService;
+    private final PasteService pasteService;
+
+    public PasteController(PasteService pasteService) {
+        this.pasteService = pasteService;
+    }
 
     @GetMapping("/system")
-    public ResponseEntity<?> systemCheck() {
-        return new ResponseEntity<>("system is healthy", HttpStatus.OK);
+    public ResponseEntity<String> systemCheck() {
+        return ResponseEntity.ok("system is healthy");
     }
+
     @PostMapping("/addPaste")
-    public ResponseEntity<?> addPaste(@RequestBody PasteBody newPaste) {
-        if(!newPaste.getPasteId().isEmpty()) {
-            if(pasteService.checkIfIdExists(newPaste.getPasteId())){
-                return new ResponseEntity<>("This paste id is not avail", HttpStatus.CONFLICT);
-            }
+    public ResponseEntity<Paste> addPaste(@RequestBody PasteBody newPaste) {
+        String requestedId = newPaste.getPasteId();
+        if (requestedId != null && !requestedId.isBlank() && pasteService.checkIfIdExists(requestedId)) {
+            throw new PasteIdConflictException(requestedId);
         }
-        try {
-           return new ResponseEntity<>(pasteService.addPaste(newPaste), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(e.getCause(), HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok(pasteService.addPaste(newPaste));
     }
+
     @GetMapping("/pasteExist")
     public ResponseEntity<Boolean> checkIdUniqueness(@RequestParam String pasteId) {
-        try {
-            return new ResponseEntity<>(pasteService.checkIfIdExists(pasteId), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok(pasteService.checkIfIdExists(pasteId));
     }
+
     @GetMapping("/getPaste")
-    public ResponseEntity<?> getPaste(@RequestParam String pasteId, @RequestParam String password) {
-        try {
-            if(pasteService.checkIfIdExists(pasteId)) {
-                Boolean getAccess = isThePasteProtected(pasteId).getBody();
-                if (Boolean.TRUE.equals(getAccess) && (password == null || password.isEmpty())) {
-                    return new ResponseEntity<>("This is a password-protected paste", HttpStatus.FORBIDDEN);
-                }
-                return new ResponseEntity<>(pasteService.getPaste(pasteId, password), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Id not found", HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Paste> getPaste(
+            @RequestParam String pasteId,
+            @RequestParam(required = false, defaultValue = "") String password
+    ) {
+        return ResponseEntity.ok(pasteService.getPaste(pasteId, password));
     }
+
     @DeleteMapping("/deletePaste")
-    public ResponseEntity<?> deletePaste(@RequestParam String pasteId) {
-        try {
-            if(pasteService.checkIfIdExists(pasteId))
-                return new ResponseEntity<>(pasteService.deletePaste(pasteId), HttpStatus.OK);
-            else
-                return new ResponseEntity<>("This paste id does not exits", HttpStatus.NOT_FOUND);
-        } catch (Exception e){
-            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Boolean> deletePaste(@RequestParam String pasteId) {
+        return ResponseEntity.ok(pasteService.deletePaste(pasteId));
     }
+
     @GetMapping("/protectedPaste")
-     public ResponseEntity<Boolean> isThePasteProtected(@RequestParam String pasteId){
-        try {
-            return new ResponseEntity<Boolean>(pasteService.checkIfPassProtected(pasteId), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Boolean> isThePasteProtected(@RequestParam String pasteId) {
+        return ResponseEntity.ok(pasteService.checkIfPassProtected(pasteId));
     }
 }
