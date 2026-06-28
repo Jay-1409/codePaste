@@ -4,6 +4,7 @@ import com.example.codePost.entity.Paste;
 import com.example.codePost.entity.PasteBody;
 import com.example.codePost.exception.PasteIdConflictException;
 import com.example.codePost.service.PasteService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class PasteController {
     }
 
     @PostMapping("/addPaste")
-    public ResponseEntity<Paste> addPaste(@RequestBody PasteBody newPaste) {
+    public ResponseEntity<Paste> addPaste(@Valid @RequestBody PasteBody newPaste) {
         String requestedId = newPaste.getPasteId();
         if (requestedId != null && !requestedId.isBlank() && pasteService.checkIfIdExists(requestedId)) {
             throw new PasteIdConflictException(requestedId);
