@@ -19,6 +19,9 @@ public class Paste implements Serializable {
 
     private String pastePass;
 
+    /**
+     * TODO: Remove the below field, access is redudent, one can just put password to make the paste private
+    */
     @NotNull
     private Boolean access = true;
 
