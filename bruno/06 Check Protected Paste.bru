@@ -1,0 +1,20 @@
+meta {
+  name: Check Protected Paste
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/paste/protectedPaste
+  body: none
+  auth: none
+}
+
+params:query {
+  pasteId: {{protectedPasteId}}
+}
+
+assert {
+  res.status: eq 200
+  res.body: eq true
+}

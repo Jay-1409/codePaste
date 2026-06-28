@@ -1,0 +1,20 @@
+meta {
+  name: Public Paste Exists
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/paste/pasteExist
+  body: none
+  auth: none
+}
+
+params:query {
+  pasteId: {{publicPasteId}}
+}
+
+assert {
+  res.status: eq 200
+  res.body: eq true
+}

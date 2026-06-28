@@ -1,0 +1,36 @@
+meta {
+  name: Add Protected Paste
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/paste/addPaste
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "paste": "password-protected paste created from Bruno",
+    "expireAfter": 7,
+    "access": false,
+    "pastePass": "{{protectedPassword}}"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body && body.pasteId) {
+    bru.setEnvVar("protectedPasteId", body.pasteId);
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.pasteId: isDefined
+}

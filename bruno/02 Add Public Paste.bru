@@ -1,0 +1,35 @@
+meta {
+  name: Add Public Paste
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/paste/addPaste
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "paste": "public paste created from Bruno",
+    "expireAfter": 7,
+    "access": true
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body && body.pasteId) {
+    bru.setEnvVar("publicPasteId", body.pasteId);
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.pasteId: isDefined
+}

@@ -1,0 +1,20 @@
+meta {
+  name: Delete Public Paste
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/paste/deletePaste
+  body: none
+  auth: none
+}
+
+params:query {
+  pasteId: {{publicPasteId}}
+}
+
+assert {
+  res.status: eq 200
+  res.body: eq true
+}

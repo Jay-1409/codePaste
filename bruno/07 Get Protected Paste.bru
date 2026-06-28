@@ -1,0 +1,20 @@
+meta {
+  name: Get Protected Paste
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/paste/getPaste
+  body: none
+  auth: none
+}
+
+params:query {
+  pasteId: {{protectedPasteId}}
+  password: {{protectedPassword}}
+}
+
+assert {
+  res.status: eq 200
+}

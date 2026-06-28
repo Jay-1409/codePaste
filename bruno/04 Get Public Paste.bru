@@ -1,0 +1,20 @@
+meta {
+  name: Get Public Paste
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/paste/getPaste
+  body: none
+  auth: none
+}
+
+params:query {
+  pasteId: {{publicPasteId}}
+  password: none
+}
+
+assert {
+  res.status: eq 200
+}

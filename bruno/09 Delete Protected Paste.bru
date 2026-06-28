@@ -1,0 +1,20 @@
+meta {
+  name: Delete Protected Paste
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/paste/deletePaste
+  body: none
+  auth: none
+}
+
+params:query {
+  pasteId: {{protectedPasteId}}
+}
+
+assert {
+  res.status: eq 200
+  res.body: eq true
+}
