@@ -1,93 +1,41 @@
-# codePaste - Pastebin Application
+# Own your personal pastebin app
 
 ---
 
-## Overview
+## Whats in there for you
+- Fully fledged backend system for powering any pastembin application. 
+- Store and access text snippets via urls
+- Secure pastes with optional password-based access.
+- Support paste expiry with configurable duration 
+- High performance paste id generation engine (powered with the goods of URL shortner)
+- Supports multiple instances (you can scale it as your like)
 
-codePaste is a Pastebin-like application designed to demonstrate **system design skills**, focusing on building a scalable, maintainable, and efficient backend service. This project showcases how to handle data persistence, caching, security, and API design in a real-world scenario.
----
-
-## Purpose
-
-This project is primarily a demonstration of system design capabilities including:
-
-* Designing **RESTful APIs** for creating, retrieving, and managing text pastes.
-* Implementing **security with authentication** and access controls.
-* Managing **data storage with MongoDB** for flexibility and scalability.
-* Leveraging **caching mechanisms** to improve performance.
-* Handling paste expiration and password protection features.
-* Applying **clean architecture** and separation of concerns.
 
 ---
 
-## Features
+## Installation
 
-* **Create & Retrieve Pastes:** Store and access text snippets via unique paste IDs.
-* **Password Protection:** Secure pastes with optional password-based access.
-* **Expiration:** Support paste expiry after a configurable duration.
-* **Access Control:** Public and private pastes with access restrictions.
-* **Caching:** Performance optimization via caching frequently accessed data.
-* **Basic Authentication:** Secure endpoints with HTTP Basic Auth.
-* **RESTful API:** Well-structured API design to facilitate client integrations.
-
----
-
-## Tech Stack
-
-* **Backend:** Java, Spring Boot
-* **Database:** MongoDB
-* **Security:** Spring Security (Basic Auth, BCrypt password encoding)
-* **Caching:** Spring Cache abstraction (e.g., with Redis or in-memory)
-* **Build & Dependency:** Maven
-* **Testing:** Postman (for API testing and visualization)
-
----
-
-## System Design Highlights
-
-* Modular service and controller layers to separate business logic.
-* Use of **caching annotations** (`@Cacheable`, `@CacheEvict`, `@CachePut`) to balance consistency and performance.
-* Thoughtful **data modeling** with MongoDB documents for pastes.
-* **Secure password storage** using BCrypt hashing.
-* **Expiry mechanism** with timestamp checks and background cleanup.
-* **Selective authentication** configuration allowing public and protected endpoints.
-
----
-### Project Structure
-![image](https://github.com/user-attachments/assets/9e6d1404-ba50-4b65-8222-9e6369c33d69)
-![design1](https://github.com/user-attachments/assets/ebd4599c-193a-4a65-879d-d7ca331749ce)
-
----
-## Getting Started
-
-### Prerequisites
-
+### Get the source code
+```bash
+git clone [https://github.com/Jay-1409/codePaste.git](https://github.com/Jay-1409/codePaste.git)
+cd codePaste
+```
+### Prerequisites 
 * Java 17 or above installed.
 * MongoDB installed and running.
 * Maven build tool.
 
-### Installation & Setup
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/Jay-1409/codePaste.git](https://github.com/Jay-1409/codePaste.git)
-    cd codePaste
-    ```
-2.  **Configure MongoDB:**
-    Update `src/main/resources/application.properties` with your MongoDB URI:
-    ```properties
-    spring.data.mongodb.uri=mongodb://localhost:27017/codepaste
-    ```
-3.  **Build the project:**
-    ```bash
-    ./mvnw clean install
-    ```
-4.  **Run the application:**
-    ```bash
-    ./mvnw spring-boot:run
-    ```
+### setting up springboot 
 
-### Authentication
+### Setting up Mongodb
+
+### setting up redis
+
+### Running the project 
+
+
+### Setting up authentication
 
 The app uses **Basic Authentication**. Default user credentials are:
 
@@ -96,35 +44,12 @@ The app uses **Basic Authentication**. Default user credentials are:
 
 You can customize this in the `SecurityConfig` class.
 By default all apis are set to be allowed without authentication.
-### API Endpoints
-
-* `POST /paste/addPaste` — Create a new paste.
-* `GET /paste/{pasteId}` — Retrieve a paste by its ID.
-* `DELETE /paste/deletePaste?pasteId=xxx` — Delete a paste by ID.
-
-*Additional endpoints are secured except those explicitly configured to be public.*
 
 ---
 
-## Future Improvements
 
-* Implement user registration and paste ownership.
-* Add richer metadata and search functionality.
-* Integrate rate limiting and abuse prevention.
-* Provide a frontend client for better UX.
-
----
-
-## Contribution
-
-This repository is mainly for demonstration and learning purposes. Feel free to fork and experiment.
-
----
-
-## License
-
-This project is open-source and free to use.
-
----
-
-Built with ❤️ by Jay-1409
+## Documentation / FAQ
+- Endpoint documentation here []()
+- How the pastebin uid generator engine works? []()
+- Whats the architecture of this project []()
+- Whiteboard drawings []()
