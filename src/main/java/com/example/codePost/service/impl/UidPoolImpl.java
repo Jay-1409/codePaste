@@ -2,22 +2,23 @@ package com.example.codePost.service.impl;
 
 import com.example.codePost.service.UidGenerator;
 import com.example.codePost.service.UidPool;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class UidPoolImpl implements UidPool {
+    private static final String UID_COUNTER_KEY = "codepaste:uid:counter";
     private static final long MAX_COUNTER = (1L << 62) - 1;
-    private final AtomicLong counter = new AtomicLong(1);
     private final BlockingQueue<String> uidQueue = new ArrayBlockingQueue<>(1000);
-    public UidPoolImpl(UidGenerator uidGenerator) {
+
+    public UidPoolImpl(UidGenerator uidGenerator, StringRedisTemplate redisTemplate) {
         Thread producer = new Thread(() -> {
             try {
                 while (true) {
-                    long nextUid = counter.getAndIncrement();
+                    long nextUid = redisTemplate.opsForValue().increment(UID_COUNTER_KEY);
                     if (nextUid > MAX_COUNTER) {
                         return;
                     }
