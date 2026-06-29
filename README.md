@@ -51,27 +51,20 @@ cd codePaste
 
 ## Single-replica benchmarks
 
-The following results were measured locally with one application replica, local MongoDB and Redis, a small public paste payload, and 15-second runs after warm-up.
+The following results were measured locally with `one application replica` , `local MongoDB and Redis` , `varied 4 KiB paste payloads` .
 
-| Operation | Concurrency | Requests/sec | p95 latency | p99 latency | Errors |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Create paste | 10 | 3,893 | 4.6 ms | 7.9 ms | 0 |
-| Create paste | 50 | 5,745 | 21.8 ms | 38.3 ms | 0 |
-| Create paste | 100 | 4,492 | 63.7 ms | 108.1 ms | 0 |
-| Fetch cached paste | 10 | 7,480 | 2.1 ms | 3.0 ms | 0 |
-| Fetch cached paste | 50 | 10,267 | 7.7 ms | 11.7 ms | 0 |
-| Fetch cached paste | 100 | 11,786 | 15.0 ms | 27.5 ms | 0 |
+| Operation | Concurrency | Requests/sec |
+| --- | ---: | ---: |
+| Create paste | 10 | 5,079 |
+| Create paste | 50 | 5,433 |
+| Create paste | 100 | 4,021 |
+| Fetch varied pastes | 10 | 2,174 |
+| Fetch varied pastes | 50 | 1,607 |
+| Fetch varied pastes | 100 | 1,433 |
 
-Paste creation reached its best measured throughput at concurrency 50. Cached reads were still scaling at concurrency 100. These are development-machine baseline results, not production capacity guarantees. The application, databases, and load generator shared the same machine; network latency, larger payloads, password hashing, and production infrastructure may change the results.
+**These are development-machine baseline results, not production capacity guarantees. The application, databases, and load generator shared the same machine.**
 
-To run the newer varied-paste benchmark, start MongoDB and the Compose Redis service, then run:
-
-```bash
-./scripts/benchmark-single-replica.sh
-```
-
-The script starts one application replica on port `18080`, uses an isolated MongoDB database and Redis database `15`, and removes the benchmark data afterward. Its asynchronous Java load client prepares a pool of mutated 4 KiB pastes, captures every returned paste ID in memory, and fetches those IDs repeatedly in round-robin order. Every ID is fetched at least three times by default. Duration, concurrency, and minimum fetch count can be customized, for example: `DURATION=30s CONCURRENCIES="25 50 75" FETCH_REPEATS=5 ./scripts/benchmark-single-replica.sh`.
-
+Want to run benchmarks on your system ? [See here](docs/benchmarking.md)
 
 ### Setting up authentication
 
