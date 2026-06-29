@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>codePost</artifactId>
+	<artifactId>letterbox</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>codePost</name>
-	<description>pastbin appication</description>
+	<name>Letterbox</name>
+	<description>A scalable pastebin application</description>
 	<url/>
 	<licenses>
 		<license/>
