@@ -1,7 +1,7 @@
 services:
   redis:
     image: redis:8-alpine
-    container_name: codepaste-redis
+    container_name: letterbox-redis
     restart: unless-stopped
     ports:
       - "127.0.0.1:6379:6379"

@@ -13,8 +13,8 @@ WARMUP_DURATION="${WARMUP_DURATION:-5s}"
 CONCURRENCIES="${CONCURRENCIES:-10 50 100}"
 FETCH_REPEATS="${FETCH_REPEATS:-3}"
 REDIS_DATABASE="${REDIS_DATABASE:-15}"
-BENCHMARK_MONGODB_URI="${BENCHMARK_MONGODB_URI:-mongodb://localhost:27017/codepaste_benchmark_$$}"
-APP_LOG="${TMPDIR:-/tmp}/codepaste-benchmark-$$.log"
+BENCHMARK_MONGODB_URI="${BENCHMARK_MONGODB_URI:-mongodb://localhost:27017/letterbox_benchmark_$$}"
+APP_LOG="${TMPDIR:-/tmp}/letterbox-benchmark-$$.log"
 
 APP_PID=""
 REDIS_PREPARED=false
