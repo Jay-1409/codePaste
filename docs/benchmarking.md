@@ -1,4 +1,5 @@
 # Benchmarking Guide
+_Currenly the tool only supports single replica benchmarking_
 
 ## Running the benchmark
 
