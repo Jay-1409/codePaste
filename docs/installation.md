@@ -70,7 +70,7 @@ Alternatively, build and run the JAR:
 
 ```bash
 sh ./mvnw clean package
-java -jar target/letterbox-0.0.1-SNAPSHOT.jar
+java -jar target/letterbox-0.1.0-alpha.1.jar
 ```
 
 ## Authentication
