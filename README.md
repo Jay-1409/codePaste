@@ -1,4 +1,6 @@
-# Own your personal pastebin app
+# Letterbox
+
+Own your personal pastebin app.
 
 ---
 
@@ -58,7 +60,7 @@ By default all apis are set to be allowed without authentication.
 
 - Run the application using the Maven wrapper: ./mvnw spring-boot:run
 - Alternatively, you can build the application with: ./mvnw clean package
-- Then run the packaged jar file: java -jar target/codePost-0.0.1-SNAPSHOT.jar
+- Then run the packaged jar file: java -jar target/letterbox-0.0.1-SNAPSHOT.jar
 
 
 --- 
