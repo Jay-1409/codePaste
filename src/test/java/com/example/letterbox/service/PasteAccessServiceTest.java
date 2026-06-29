@@ -9,6 +9,7 @@ package com.example.letterbox.service;
 
 import com.example.letterbox.entity.Paste;
 import com.example.letterbox.exception.PasteAccessDeniedException;
+import com.example.letterbox.service.impl.PasteAccessService;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

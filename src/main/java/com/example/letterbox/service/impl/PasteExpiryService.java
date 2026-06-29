@@ -5,11 +5,13 @@
  *
  */
 
-package com.example.letterbox.service;
+package com.example.letterbox.service.impl;
 
 import com.example.letterbox.entity.Paste;
 import com.example.letterbox.exception.PasteExpiredException;
 import com.example.letterbox.repository.PasteRepository;
+import com.example.letterbox.service.PasteCache;
+import com.example.letterbox.service.PasteExpiryPolicy;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;

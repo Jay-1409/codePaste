@@ -16,14 +16,14 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 @Component
-public class RedisPasteIdGenerator implements PasteIdGenerator {
+public class custom62BitUidGenerator implements PasteIdGenerator {
     private static final String UID_COUNTER_KEY = "codepaste:uid:counter";
     private static final long MAX_COUNTER = (1L << 62) - 1;
     private static final long BATCH_SIZE = 1000;
 
     private final BlockingQueue<String> availableIds = new ArrayBlockingQueue<>((int) BATCH_SIZE);
 
-    public RedisPasteIdGenerator(UidCodec uidCodec, StringRedisTemplate redisTemplate) {
+    public custom62BitUidGenerator(UidCodec uidCodec, StringRedisTemplate redisTemplate) {
         Thread producer = new Thread(() -> produceIds(uidCodec, redisTemplate));
         producer.setDaemon(true);
         producer.setName("paste-id-producer");

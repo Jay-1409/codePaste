@@ -5,10 +5,11 @@
  *
  */
 
-package com.example.letterbox.service;
+package com.example.letterbox.service.impl;
 
 import com.example.letterbox.entity.Paste;
 import com.example.letterbox.exception.PasteAccessDeniedException;
+import com.example.letterbox.service.PasteAccessPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -32,7 +32,7 @@ class RedisPasteIdGeneratorTest {
         when(uidCodec.encode(anyLong()))
                 .thenAnswer(invocation -> Optional.of(String.valueOf(invocation.getArgument(0, Long.class))));
 
-        RedisPasteIdGenerator idGenerator = new RedisPasteIdGenerator(uidCodec, redisTemplate);
+        custom62BitUidGenerator idGenerator = new custom62BitUidGenerator(uidCodec, redisTemplate);
 
         assertEquals("1", idGenerator.nextId());
         assertEquals("2", idGenerator.nextId());

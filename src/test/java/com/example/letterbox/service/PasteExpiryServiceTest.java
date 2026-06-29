@@ -10,6 +10,7 @@ package com.example.letterbox.service;
 import com.example.letterbox.entity.Paste;
 import com.example.letterbox.exception.PasteExpiredException;
 import com.example.letterbox.repository.PasteRepository;
+import com.example.letterbox.service.impl.PasteExpiryService;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
