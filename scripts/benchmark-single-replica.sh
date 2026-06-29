@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+#
+# /*
+#  * Copyright (c) 2025-2026 Jay Shah
+#  * SPDX-License-Identifier: Apache-2.0
+#  */
+#
+
 set -euo pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
