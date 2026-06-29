@@ -64,6 +64,14 @@ The following results were measured locally with one application replica, local 
 
 Paste creation reached its best measured throughput at concurrency 50. Cached reads were still scaling at concurrency 100. These are development-machine baseline results, not production capacity guarantees. The application, databases, and load generator shared the same machine; network latency, larger payloads, password hashing, and production infrastructure may change the results.
 
+To run the newer varied-paste benchmark, start MongoDB and the Compose Redis service, then run:
+
+```bash
+./scripts/benchmark-single-replica.sh
+```
+
+The script starts one application replica on port `18080`, uses an isolated MongoDB database and Redis database `15`, and removes the benchmark data afterward. Its asynchronous Java load client prepares a pool of mutated 4 KiB pastes, captures every returned paste ID in memory, and fetches those IDs repeatedly in round-robin order. Every ID is fetched at least three times by default. Duration, concurrency, and minimum fetch count can be customized, for example: `DURATION=30s CONCURRENCIES="25 50 75" FETCH_REPEATS=5 ./scripts/benchmark-single-replica.sh`.
+
 
 ### Setting up authentication
 
