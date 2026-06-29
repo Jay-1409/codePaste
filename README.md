@@ -86,7 +86,7 @@ Want to run benchmarks on your system ? [See here](docs/benchmarking.md)
 
 
 ## Documentation / FAQ
-- Endpoint documentation here []()
-- How the pastebin uid generator engine works? []()
-- Whats the architecture of this project []()
-- Whiteboard drawings []()
+- Endpoint documentation [here](docs/endpoints.md)
+- How the pastebin uid generator engine works? [here](docs/custom-uid-generator.md)
+- Whats the architecture of this project [here](docs/architecture.md)
+- Whiteboard drawings [here](docs/whiteboard.excalidraw)
