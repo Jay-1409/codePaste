@@ -42,7 +42,10 @@ public class PasteService {
         this.pasteAccessPolicy = pasteAccessPolicy;
         this.clock = clock;
     }
-
+    /**
+     * @param paste the paste to add
+     * @return the added paste  
+     */
     public Paste addPaste(@NotNull PasteBody paste) {
         Paste newPaste = new Paste();
         String pasteId = paste.getPasteId() == null || paste.getPasteId().isBlank()
@@ -79,20 +82,32 @@ public class PasteService {
     public boolean checkIfPassProtected(String pasteId) {
         return pasteAccessPolicy.isProtected(getActivePaste(pasteId));
     }
-
+    /**
+     * @param pasteId the paste id
+     * @param password the password
+     * @return the paste  
+     */
     public Paste getPaste(String pasteId, String password) {
         Paste paste = getActivePaste(pasteId);
         pasteAccessPolicy.verifyAccess(paste, password);
         return paste;
     }
 
+    /**
+     * @param pasteId the paste id
+     * @return true if the paste was deleted successfully  
+     */
     public boolean deletePaste(String pasteId) {
         Paste paste = getActivePaste(pasteId);
         pasteRepository.deleteById(paste.getPasteId());
         pasteCache.evict(paste.getPasteId());
         return true;
     }
-
+    /**
+     * @param pasteId the paste id
+     * @return the paste  
+     * @throws PasteNotFoundException if the paste is not found
+     */
     private Paste getActivePaste(String pasteId) {
         Paste paste = pasteCache.findById(pasteId);
         if (paste == null) {

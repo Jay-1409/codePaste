@@ -14,7 +14,7 @@ Integrate through simple HTTP APIs, deploy it yourself, and scale with MongoDB a
 - High performance paste id generation engine (powered with the goods of URL shortner)
 - Supports multiple instances (you can scale it as your like)
 - Total number of pastes supported 2⁶² − 1 = 4,611,686,018,427,387,903
-
+- Default paste expiration after 30 days
 ---
 
 ## Installation

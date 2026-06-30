@@ -30,7 +30,7 @@ public class PasteAccessService implements PasteAccessPolicy {
     public String encodePassword(String password) {
         return passwordEncoder.encode(password);
     }
-
+    
     @Override
     public void verifyAccess(Paste paste, String password) {
         if (!isProtected(paste)) {
