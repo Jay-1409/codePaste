@@ -17,9 +17,14 @@ headers {
 body:json {
   {
     "paste": "public paste created from Bruno",
-    "expireAfter": 7,
+    "expireAfter": 0.1,
     "access": true
   }
+}
+
+assert {
+  res.status: eq 200
+  res.body.pasteId: isDefined
 }
 
 script:post-response {
@@ -27,9 +32,4 @@ script:post-response {
   if (body && body.pasteId) {
     bru.setEnvVar("publicPasteId", body.pasteId);
   }
-}
-
-assert {
-  res.status: eq 200
-  res.body.pasteId: isDefined
 }

@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/paste/getPaste
+  url: {{baseUrl}}/paste/getPaste?pasteId={{protectedPasteId}}&password={{protectedPassword}}
   body: none
   auth: none
 }

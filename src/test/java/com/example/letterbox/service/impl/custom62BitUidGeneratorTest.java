@@ -7,34 +7,27 @@
 
 package com.example.letterbox.service.impl;
 
-import com.example.letterbox.service.UidCodec;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class RedisPasteIdGeneratorTest {
+class custom62BitUidGeneratorTest {
 
     @Test
-    void fillsPoolFromRedisReservedRange() throws Exception {
-        UidCodec uidCodec = mock(UidCodec.class);
+    void fillsPoolFromRedisReservedRange() {
         StringRedisTemplate redisTemplate = mock(StringRedisTemplate.class);
         ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.increment("codepaste:uid:counter", 1000)).thenReturn(1000L, 2000L);
-        when(uidCodec.encode(anyLong()))
-                .thenAnswer(invocation -> Optional.of(String.valueOf(invocation.getArgument(0, Long.class))));
 
-        custom62BitUidGenerator idGenerator = new custom62BitUidGenerator(uidCodec, redisTemplate);
+        custom62BitUidGenerator idGenerator = new custom62BitUidGenerator(redisTemplate);
 
+        assertEquals("0", idGenerator.nextId());
         assertEquals("1", idGenerator.nextId());
-        assertEquals("2", idGenerator.nextId());
     }
 }
